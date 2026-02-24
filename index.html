@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Agenda do dia</title>
+  <style>
+    :root{
+      --bg0:#07080b;
+      --bg1:#0b0d14;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.14);
+      --text:#e9ecff;
+      --muted: rgba(233,236,255,.70);
+
+      --ava: #b89b2f;
+      --git: #2d6aa8;
+      --bar: #6e2d50;
+      --warn: #ffcc66;
+
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --softshadow: 0 10px 30px rgba(0,0,0,.38);
+
+      --r: 22px;
+      --r2: 16px;
+      --pad: clamp(14px, 2vw, 22px);
+      --gap: clamp(10px, 1.6vw, 18px);
+
+      --max: 1180px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    /* ---------- Base ---------- */
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 15% 10%, rgba(120,0,200,.22), transparent 55%),
+                  radial-gradient(900px 650px at 85% 25%, rgba(0,160,255,.20), transparent 60%),
+                  radial-gradient(900px 700px at 55% 105%, rgba(255,120,60,.14), transparent 60%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* movimento suave, mas respeita "reduzir animações" */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+    }
+
+    /* brilho “vivo” */
+    .glow{
+      position:fixed;
+      inset:-40vh -30vw;
+      pointer-events:none;
+      background:
+        radial-gradient(60vh 60vh at 20% 30%, rgba(180,90,255,.18), transparent 60%),
+        radial-gradient(55vh 55vh at 70% 40%, rgba(70,200,255,.14), transparent 60%),
+        radial-gradient(65vh 65vh at 60% 80%, rgba(255,150,60,.10), transparent 70%);
+      filter: blur(18px);
+      opacity:.95;
+      animation: drift 10s ease-in-out infinite alternate;
+      mix-blend-mode: screen;
+    }
+    @keyframes drift{
+      from{ transform: translate3d(-1.2%, -0.8%, 0) scale(1); }
+      to  { transform: translate3d( 1.2%,  1.1%, 0) scale(1.02); }
+    }
+
+    /* grade de fundo discreta */
+    .grid{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.35;
+      background:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px) 0 0/ 42px 42px,
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px) 0 0/ 42px 42px;
+      mask-image: radial-gradient(70% 60% at 50% 20%, black 30%, transparent 70%);
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 30px);
+      position:relative;
+      z-index:2;
+    }
+
+    /* ---------- Topo ---------- */
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 10px 2px 18px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      min-width: 260px;
+    }
+
+    .icon{
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.11), rgba(255,255,255,.04)),
+        radial-gradient(80% 80% at 20% 20%, rgba(255,255,255,.22), transparent 55%);
+      border:1px solid var(--stroke);
+      box-shadow: var(--softshadow);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .icon::after{
+      content:"";
+      position:absolute;
+      inset:-60%;
+      background: conic-gradient(from 180deg,
+        rgba(255,255,255,.0),
+        rgba(255,255,255,.22),
+        rgba(255,255,255,.0));
+      animation: spin 5.5s linear infinite;
+      opacity:.55;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+
+    .emoji{
+      position:relative;
+      z-index:1;
+      font-size: 30px;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,.55));
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(28px, 3.2vw, 44px);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .sub{
+      margin-top:6px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.3vw, 14px);
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .clock{
+      text-align:right;
+      min-width: 170px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--softshadow);
+    }
+    .clock .time{
+      font-size: clamp(16px, 2.1vw, 26px);
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+    .clock .date{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    /* ---------- Layout ---------- */
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+      margin-top: 12px;
+    }
+    @media (max-width: 860px){
+      header{ align-items:flex-start; }
+      .clock{ text-align:left; min-width: unset; }
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Cards ---------- */
+    .card{
+      border-radius: var(--r);
+      padding: var(--pad);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(700px 200px at 10% 0%, rgba(255,255,255,.10), transparent 60%);
+      pointer-events:none;
+      opacity:.85;
+    }
+
+    .linkCard{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 14px;
+      transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    }
+    .linkCard:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(255,255,255,.075);
+    }
+    .linkCard .title{
+      font-weight: 800;
+      font-size: clamp(14px, 1.7vw, 18px);
+      margin:0 0 6px;
+      letter-spacing:-.01em;
+    }
+    .linkCard a{
+      color: var(--text);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-weight: 650;
+      opacity:.95;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .linkCard a:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.26);
+    }
+    .badge{
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+
+    .ava{ border-left: 6px solid color-mix(in srgb, var(--ava) 70%, transparent); }
+    .git{ border-left: 6px solid color-mix(in srgb, var(--git) 70%, transparent); }
+
+    /* ---------- Barra “AGENDA DE HOJE” ---------- */
+    .bar{
+      margin-top: var(--gap);
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--bar) 60%, transparent),
+        rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.12);
+      position:relative;
+      overflow:hidden;
+    }
+    .bar::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: conic-gradient(from 180deg,
+        rgba(255,255,255,0),
+        rgba(255,255,255,.18),
+        rgba(255,255,255,0));
+      animation: spin 6.8s linear infinite;
+      opacity:.25;
+    }
+    .bar span{
+      position:relative;
+      z-index:1;
+      font-weight: 900;
+      letter-spacing: .12em;
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity:.92;
+      display:block;
+      text-align:center;
+    }
+
+    /* ---------- Listas / conteúdo ---------- */
+    .section{
+      margin-top: var(--gap);
+      display:grid;
+      gap: var(--gap);
+    }
+
+    .agenda{
+      display:grid;
+      gap: 10px;
+    }
+    .agenda ul{
+      margin: 0;
+      padding-left: 18px;
+      display:grid;
+      gap: 10px;
+      font-size: clamp(15px, 1.6vw, 18px);
+      line-height: 1.35;
+    }
+
+    /* ---------- Accordion ---------- */
+    details{
+      border-radius: var(--r);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding: 14px var(--pad);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      font-weight: 850;
+      letter-spacing: -.01em;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .chev{
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      display:grid;
+      place-items:center;
+      transition: transform .25s ease;
+      flex: 0 0 auto;
+    }
+    details[open] .chev{ transform: rotate(180deg); }
+    .oldContent{
+      padding: 0 var(--pad) var(--pad);
+      color: rgba(233,236,255,.88);
+    }
+    .oldContent h3{
+      margin: 18px 0 10px;
+      font-size: 15px;
+      color: rgba(233,236,255,.92);
+      letter-spacing:.01em;
+    }
+    .oldContent .block{
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      margin: 10px 0;
+    }
+    .oldContent ul{
+      margin: 0;
+      padding-left: 18px;
+      display:grid;
+      gap: 8px;
+      line-height: 1.35;
+      color: rgba(233,236,255,.86);
+    }
+
+    /* ---------- Avisos ---------- */
+    .warn{
+      border-left: 6px solid color-mix(in srgb, var(--warn) 70%, transparent);
+      background: linear-gradient(90deg,
+        rgba(255,204,102,.12),
+        rgba(255,255,255,.045));
+    }
+    .warn strong{
+      color: rgba(255,233,170,.98);
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: clamp(13px, 1.35vw, 15px);
+      line-height: 1.4;
+      white-space: pre-wrap;
+      margin:0;
+      color: rgba(233,236,255,.92);
+    }
+
+    .quote{
+      position:relative;
+      padding-left: 18px;
+    }
+    .quote::before{
+      content:"";
+      position:absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.20);
+    }
+
+    /* ---------- Footer micro ---------- */
+    .tiny{
+      margin-top: 12px;
+      color: rgba(233,236,255,.55);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+
+    /* ---------- Botão de tela cheia ---------- */
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(233,236,255,.92);
+      font-weight: 750;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <header>
+      <div class="brand">
+        <div class="icon" aria-hidden="true"><div class="emoji">🗓️</div></div>
+        <div>
+          <h1>Agenda do dia</h1>
+          <div class="sub">
+            <span class="pill">Projeção • Modo sala</span>
+            <span class="pill">Agenda + avisos</span>
+            <span class="pill" id="statusPill">Tudo pronto ✅</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="clock" role="status" aria-live="polite">
+          <div class="time" id="clockTime">--:--</div>
+          <div class="date" id="clockDate">--/--/----</div>
+        </div>
+        <button class="btn" id="fsBtn" type="button" title="Tela cheia">⛶ Tela cheia</button>
+      </div>
+    </header>
+
+    <section class="grid2">
+      <article class="card linkCard ava">
+        <div>
+          <p class="title">Já logou no AVA?</p>
+          <div class="badge">ava.sesisenai.org.br</div>
+        </div>
+        <a href="http://ava.sesisenai.org.br/" target="_blank" rel="noopener">
+          Abrir ↗
+        </a>
+      </article>
+
+      <article class="card linkCard git">
+        <div>
+          <p class="title">Já logou no github.com?</p>
+          <div class="badge">github.com</div>
+        </div>
+        <a href="https://github.com/" target="_blank" rel="noopener">
+          Abrir ↗
+        </a>
+      </article>
+    </section>
+
+    <div class="bar"><span>=============== AGENDA DE HOJE ===============</span></div>
+
+    <section class="section">
+      <article class="card agenda">
+        <ul>
+          <li>Revisão da criação de projeto React</li>
+          <li>Exercícios básicos para fixação</li>
+          <li>Revisão do processo do git/github</li>
+        </ul>
+      </article>
+
+      <details>
+        <summary>
+          <span>▶ Antigos</span>
+          <span class="chev">⌄</span>
+        </summary>
+
+        <div class="oldContent">
+          <h3>4/12/25</h3>
+          <div class="block">
+            <ul>
+              <li><strong>INFO OFICIAL:</strong> Data da SA ⇒ 8/12</li>
+              <li>❗‼️❕⚠️ <strong>PRIORIDADE ABSOLUTA DE HOJE: Sprint review!!</strong>
+                <ul>
+                  <li>Já deixem uma máquina com o sistema rodando pra gente ver o que dá</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <h3>antigo</h3>
+          <div class="block">
+            <ul>
+              <li>Desenvolvimento da SA</li>
+              <li>19:30 &gt;&gt; Premiação do Dev++ SENAI Floripa no auditório</li>
+              <li>Desenvolvimento da SA</li>
+              <li>21:30 &gt;&gt; Conselho de classe, todos liberados pra gente poder fazer fofoca em paz</li>
+            </ul>
+          </div>
+
+          <h3>3/12/25</h3>
+          <div class="block">
+            <ul>
+              <li>Data da SA (8/12 || 9/12)</li>
+              <li>Sprint review</li>
+              <li>Avaliação objetiva: 2/12</li>
+              <li>Pesquisa</li>
+              <li>Expectativas para as nossas últimas aulas
+                <ul>
+                  <li>Rota protegida</li>
+                  <li>Dashboard e gráficos</li>
+                  <li>useEffect</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <h3>251103 - Lógica</h3>
+          <div class="block">
+            <ul>
+              <li>Processo de casastro de informação;</li>
+              <li>Desenvolimento da SA</li>
+            </ul>
+          </div>
+
+          <h3>251027 - IoT</h3>
+          <div class="block">
+            <ul>
+              <li>SAEP prático - adiado 18/11</li>
+              <li>Esquenta SAEP</li>
+              <li>Sprint review da Sprint02 - Rastreabilidade de pedido</li>
+              <li>Sprint03 - 11/11
+                <ul>
+                  <li>Slot de entrega do produto na expedição (ainda não implementado, mas pode ser mockado);</li>
+                  <li>Integração da IA</li>
+                  <li>Conversa com a gestão do estoque (ainda não implementado, mas pode ser mockado);
+                    <ul>
+                      <li>Get de cores de chassis disponíveis;</li>
+                      <li>Interface de reposição de peças;</li>
+                      <li>Edição/remoção de peças;</li>
+                    </ul>
+                  </li>
+                  <li>Rastreamento de pedido pelo callbackURL;
+                    <ul>
+                      <li>Implementação/deploy da rota post para o callbackURL;</li>
+                      <li>Abolição do get por ID no pedido (fim do cutuco);</li>
+                      <li>Funcionalidade de confirmar entrega e liberar a posição do estoque;</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Bônus: rastreabilidade via RFID</li>
+            </ul>
+          </div>
+
+          <h3>Backlog do Alexpress</h3>
+          <div class="block">
+            <ul>
+              <li>Devolver slot de entrega no callback</li>
+              <li>Acesso ao estoque e expedição
+                <ul>
+                  <li>/estoque</li>
+                  <li>/expedicao</li>
+                  <li>RFID no pedido</li>
+                  <li>Comunicação oficial com a bancada;</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <div class="bar"><span>=============== AGENDA DE HOJE ===============</span></div>
+
+    <section class="section">
+      <article class="card warn">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div aria-hidden="true" style="font-size:20px; margin-top:2px;">⚠️</div>
+          <div>
+            <div style="font-weight:900; letter-spacing:-.01em;">
+              Já guardou celular e fones de ouvido para garantir que nenhum problema vai acontecer?
+            </div>
+            <div style="margin-top:6px; color: var(--muted); font-size: 13px;">
+              (Aquele lembrete preventivo de paz na sala 😄)
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <pre class="mono">+++++++++++++++++++++++++++++++++++++++++++++++++++
+Já tem o repositório? git pull
+Não tem o repositório no computador? git clone :D
++++++++++++++++++++++++++++++++++++++++++++++++++++</pre>
+      </article>
+
+      <article class="card quote">
+        <div style="display:grid; gap:10px;">
+          <div style="font-weight:850;">
+            Já deu aquela espiadinha nas vagas e recursos do <strong>Jamanjo.com.br</strong>?
+          </div>
+          <div style="font-weight:850;">
+            Já deixou uma estrelinha lá no repositório do jamanjo?<br/>
+            <span style="color: rgba(233,236,255,.86); font-weight:800;">Muito bem! &lt;3 📝🥳</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="tiny">
+        <span>Dica: aperta <strong>F11</strong> no Windows/Chrome pra modo projetor (sem barras).</span>
+        <span>Atalho: <strong>Ctrl +</strong> / <strong>Ctrl -</strong> ajusta zoom rapidamente.</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Relógio + data
+    const elT = document.getElementById('clockTime');
+    const elD = document.getElementById('clockDate');
+    const statusPill = document.getElementById('statusPill');
+
+    function tick(){
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      elT.textContent = `${hh}:${mm}`;
+
+      const dd = String(now.getDate()).padStart(2,'0');
+      const mo = String(now.getMonth()+1).padStart(2,'0');
+      const yy = now.getFullYear();
+      const wd = now.toLocaleDateString('pt-BR', { weekday:'long' });
+      elD.textContent = `${wd} • ${dd}/${mo}/${yy}`;
+    }
+    tick();
+    setInterval(tick, 1000 * 10);
+
+    // Botão de tela cheia
+    const fsBtn = document.getElementById('fsBtn');
+    fsBtn.addEventListener('click', async () => {
+      try{
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+          fsBtn.textContent = '⛶ Sair tela cheia';
+          statusPill.textContent = 'Modo projetor ✅';
+        } else {
+          await document.exitFullscreen();
+          fsBtn.textContent = '⛶ Tela cheia';
+          statusPill.textContent = 'Tudo pronto ✅';
+        }
+      }catch(e){
+        statusPill.textContent = 'Tela cheia indisponível ⚠️';
+      }
+    });
+
+    // Tecla "f" alterna tela cheia (bem útil no projetor)
+    window.addEventListener('keydown', (ev) => {
+      if(ev.key.toLowerCase() === 'f'){
+        ev.preventDefault();
+        fsBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
