@@ -1,30 +1,3 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <title>Agenda do dia</title>
-
-  <!-- FAVICON SVG (inline, sem arquivo externo) -->
-  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="%23ff5f6d"/>
-        <stop offset="1" stop-color="%236e2d50"/>
-      </linearGradient>
-    </defs>
-    <rect width="100" height="100" rx="22" fill="%230b0d14"/>
-    <rect x="14" y="22" width="72" height="64" rx="12" fill="%23ffffff"/>
-    <rect x="14" y="22" width="72" height="18" rx="12" fill="url(%23g)"/>
-    <circle cx="34" cy="31" r="4.2" fill="%230b0d14"/>
-    <circle cx="66" cy="31" r="4.2" fill="%230b0d14"/>
-    <rect x="26" y="48" width="48" height="6" rx="3" fill="%230b0d14" opacity=".18"/>
-    <rect x="26" y="60" width="40" height="6" rx="3" fill="%230b0d14" opacity=".14"/>
-  </svg>'/>
-
-  <style>
     :root{
       --bg0:#07080b;
       --bg1:#0b0d14;
@@ -46,20 +19,25 @@
 
       --r: 22px;
       --pad: clamp(16px, 2vw, 26px);
-      --gap: clamp(14px, 2vw, 22px);
+      /* --gap: clamp(14px, 2vw, 22px); */
+      --gap: clamp(8px, 1vw, 22px);
       --max: 1180px;
 
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      /* --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji"; */
+      --font: monospace;
+      /* --font: 'Courier New', Courier, monospace; */
     }
 
-    *{ box-sizing:border-box; }
+    *{ 
+        box-sizing:border-box; 
+    }
     html,body{ height:100%; }
     body{
       margin:0;
       font-family: var(--font);
       color: var(--text);
       background:
-        radial-gradient(1200px 800px at 15% 10%, rgba(120,0,200,.22), transparent 55%),
+        radial-gradient(1200px 800px at 15% 10%, rgba(120, 0, 200, 0.22), transparent 55%),
         radial-gradient(900px 650px at 85% 25%, rgba(0,160,255,.20), transparent 60%),
         radial-gradient(900px 700px at 55% 105%, rgba(255,120,60,.12), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
@@ -100,7 +78,7 @@
     .wrap{
       max-width: var(--max);
       margin: 0 auto;
-      padding: clamp(18px, 3vw, 30px);
+      padding: clamp(10px, 1vw, 30px);
       position:relative;
       z-index:2;
     }
@@ -230,93 +208,146 @@
     }
 
     /* ==========================
-       LINKS (AVA / GITHUB) - MAIS COMPACTOS
+       LINKS (AVA / GITHUB) - SUPER COMPACTOS (LINHA ÚNICA)
        ========================== */
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;              /* menor */
-      margin-top: 6px;        /* menor */
+      gap: 10px;
+      margin-top: 6px;
     }
     @media (max-width: 860px){
       .grid2{ grid-template-columns: 1fr; }
       .clock{ text-align:left; }
     }
 
+    /* card bem baixo, estilo “barra” */
     .linkCard{
-      padding: 12px 14px;     /* menor que o card padrão */
-      border-radius: 18px;
+      padding: 8px 10px;
+      border-radius: 16px;
       display:flex;
-      align-items:center;     /* mais “linha” */
+      align-items:center;
       justify-content:space-between;
       gap: 10px;
-      min-height: 64px;       /* impede crescer demais */
-      transition: transform .25s ease, border-color .25s ease, background .25s ease;
+      min-height: 46px;
+      box-shadow: var(--softshadow);
+      transition: transform .20s ease, border-color .20s ease, background .20s ease;
     }
     .linkCard:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,.20);
-      background: rgba(255,255,255,.075);
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.07);
     }
-    .linkCard .title{
-      font-weight: 900;
-      font-size: 14px;        /* fixo e compacto */
-      margin:0 0 4px;
+
+    .linkMeta{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .linkMeta .title{
+      font-weight: 950;
+      font-size: 14px;
+      margin:0;
       letter-spacing:-.01em;
-      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
     .badge{
-      font-size: 11px;        /* menor */
+      font-size: 11px;
       color: rgba(255,255,255,.86);
-      padding: 5px 8px;       /* menor */
+      padding: 3px 8px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.18);
       white-space:nowrap;
       display:inline-block;
+      flex: 0 0 auto;
     }
+    .itemP{
+      font-size: 11px;
+      color: rgba(255,255,255,.86);
+      padding: 3px 8px;
+      border-radius: 9px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+      display:inline-block;
+      flex: 0 0 auto;
+    }
+
+    .tarefa{
+      font-size: 20px;
+      color: #D4AF37;
+      padding: 4px 14px;
+      border-radius: 999px;
+      /* border:1px solid rgba(255,255,255,.14); */
+      border:1px solid #D4AF37;
+      box-shadow: 0 0 4px #D4AF37;
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+      display:inline-block;
+      flex: 0 0 auto;
+    }
+
+
+    @media (max-width: 520px){
+      .tarefas{ font-size: 16px; }
+    }
+
+
     .linkCard a{
       color: var(--text);
       text-decoration:none;
       display:inline-flex;
       align-items:center;
       gap: 8px;
-      font-weight: 800;
-      opacity:.95;
-      padding: 7px 10px;      /* menor */
+      font-weight: 900;
+      opacity:.96;
+      padding: 6px 10px;
       border-radius: 12px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      background: rgba(0,0,0,.20);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
       flex: 0 0 auto;
-      height: fit-content;
-      font-size: 13px;
+      font-size: 12.8px;
+      line-height: 1;
     }
     .linkCard a:hover{
       transform: translateY(-1px);
       border-color: rgba(255,255,255,.26);
-      background: rgba(0,0,0,.24);
+      background: rgba(0,0,0,.26);
     }
 
-    .ava{ border-left: 6px solid color-mix(in srgb, var(--ava) 70%, transparent); }
-    .git{ border-left: 6px solid color-mix(in srgb, var(--git) 70%, transparent); }
+    /* deixa ainda mais “clean” no mobile */
+    @media (max-width: 520px){
+      .linkMeta .title{ max-width: 24ch; }
+      .badge{ display:none; }
+      .linkCard a{ padding: 6px 9px; }
+    }
 
-    /* ==========================
+    .ava{ border-left: 5px solid color-mix(in srgb, var(--ava) 70%, transparent); }
+    .git{ border-left: 5px solid color-mix(in srgb, var(--git) 70%, transparent); }
+/* ==========================
        AGENDA - MAIS DESTAQUE (SUTIL + ACESSÍVEL)
        ========================== */
     .agenda{
       text-align:center; /* centraliza o bloco */
       display: flex;
       flex-direction: column;
+      color: #D4AF37;
       border-color: rgba(255,255,255,.18);
       background:
-        radial-gradient(900px 200px at 50% 0%, rgba(255,255,255,.08), transparent 70%),
-        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      radial-gradient(900px 200px at 50% 0%, rgba(255,255,255,.08), transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: 0 0 4px #D4AF37;
     }
 
     .agenda h2{
       margin: 0 0 14px 0;
-      font-size: clamp(16px, 1.9vw, 20px); /* maior */
+      font-size: clamp(26px, 1.9vw, 32px); /* maior */
       letter-spacing: .22em;
       text-transform: uppercase;
       font-weight: 1000;
@@ -336,38 +367,44 @@
       margin: 0 auto;
       padding-left: 0;                 /* remove deslocamento */
       list-style-position: inside;     /* bullets ficam “dentro” */
-      display:inline-block;            /* permite centralizar sem ficar largo */
-      text-align:left;                 /* lista legível, alinhada */
-      gap: 10px;
-      font-size: clamp(16px, 1.8vw, 20px); /* maior um pouco */
-      line-height: 1.5;
-    }
-    .agenda li{
-      padding: 6px 0;
-    }
-
-    /* Glow / pulse bem suave (evita estímulo excessivo) */
-    .agenda{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5px;
+      /* display:inline-block;            permite centralizar sem ficar largo */
+    
+      text-align:lef.agenda{
       box-shadow:
         0 0 0 1px rgba(255,255,255,.06) inset,
         0 18px 50px rgba(0,0,0,.55),
-        0 0 22px rgba(255,110,150,.10); /* glow leve */
-      animation: agendaPulse 5.2s ease-in-out infinite;
+        0 0 28px rgba(255,110,150,.13); /* glow suave, mas visível */
+      animation: agendaPulse 4.0s ease-in-out infinite;
+      will-change: box-shadow, transform;
     }
+  }
+
+
+
+
     @keyframes agendaPulse{
       0%, 100%{
+        transform: translateZ(0) scale(1);
         box-shadow:
           0 0 0 1px rgba(255,255,255,.06) inset,
           0 18px 50px rgba(0,0,0,.55),
-          0 0 22px rgba(255,110,150,.08);
+          0 0 28px rgba(255,110,150,.11);
       }
       50%{
+        transform: translateZ(0) scale(1.01);
         box-shadow:
-          0 0 0 1px rgba(255,255,255,.08) inset,
+          0 0 0 1px rgba(255,255,255,.09) inset,
           0 18px 50px rgba(0,0,0,.55),
-          0 0 26px rgba(255,110,150,.14);
+          0 0 44px rgba(255,110,150,.19);
       }
     }
+    
+  /* } */
+
     @media (prefers-reduced-motion: reduce){
       .glow{ animation: none !important; }
       .agenda{ animation: none !important; }
@@ -390,11 +427,14 @@
       white-space: pre-wrap;
       margin:0;
       color: rgba(233,236,255,.92);
+      background-color: black;
+      padding: 2px 6px;
     }
 
     .quote{
       position:relative;
       padding-left: 18px;
+      color: #4a6318;
     }
     .quote::before{
       content:"";
@@ -423,143 +463,12 @@
       display:grid;
       gap: var(--gap);
     }
-  </style>
-</head>
 
-<body>
-  <div class="glow" aria-hidden="true"></div>
-  <div class="gridbg" aria-hidden="true"></div>
-
-  <main class="wrap">
-    <header>
-      <div class="brand">
-        <div class="icon" aria-hidden="true"><div class="emoji">🗓️</div></div>
-        <div>
-          <h1>Agenda do dia</h1>
-        </div>
-      </div>
-
-      <div class="actions">
-        <div class="clock" role="status" aria-live="polite">
-          <div class="time" id="clockTime">--:--</div>
-          <div class="date" id="clockDate">--/--/----</div>
-        </div>
-        <button class="btn" id="fsBtn" type="button" title="Tela cheia">⛶ Tela cheia</button>
-      </div>
-    </header>
-
-    <!-- LINKS (AVA / GITHUB) -->
-    <section class="grid2">
-      <article class="card linkCard ava">
-        <div>
-          <p class="title">Já logou no AVA?</p>
-          <div class="badge">ava.sesisenai.org.br</div>
-        </div>
-        <a href="http://ava.sesisenai.org.br/" target="_blank" rel="noopener">
-          Abrir ↗
-        </a>
-      </article>
-
-      <article class="card linkCard git">
-        <div>
-          <p class="title">Já logou no github.com?</p>
-          <div class="badge">github.com</div>
-        </div>
-        <a href="https://github.com/" target="_blank" rel="noopener">
-          Abrir ↗
-        </a>
-      </article>
-    </section>
-
-    <section class="stack">
-      <!-- AGENDA (1 BLOCO) -->
-      <div class="card agenda">
-        <h2>AGENDA DE HOJE</h2>
-        <ul>
-          <li>Revisão da criação de projeto React</li>
-          <li>Exercícios básicos para fixação</li>
-          <li>Revisão do processo do git/github</li>
-        </ul>
-      </div>
-
-      <!-- ANTIGOS (comentado, não aparece)
-      <details>
-        <summary>Antigos</summary>
-        <div>...</div>
-      </details>
-      -->
-
-      <article class="card warn">
-        <div style="display:flex; gap:12px; align-items:flex-start;">
-          <div aria-hidden="true" style="font-size:20px; margin-top:2px;">⚠️</div>
-          <div style="font-weight:900; letter-spacing:-.01em;">
-            Já guardou celular e fones de ouvido para garantir que nenhum problema vai acontecer?
-          </div>
-        </div>
-      </article>
-
-      <article class="card">
-        <pre class="mono">+++++++++++++++++++++++++++++++++++++++++++++++++++
-Já tem o repositório? git pull
-Não tem o repositório no computador? git clone :D
-+++++++++++++++++++++++++++++++++++++++++++++++++++</pre>
-      </article>
-
-      <article class="card quote">
-        <div style="display:grid; gap:10px;">
-          <div style="font-weight:900;">
-            Já deu aquela espiadinha nas vagas e recursos do <strong><a href="https://www.jamanjo.com.br/">Jamanjo.com.br</a></strong>?
-          </div>
-          <div style="font-weight:900;">
-            Já deixou uma estrelinha lá no <a href="https://github.com/rafaellindemann/jamanjo">repositório do jamanjo?</a><br/>
-            <span style="color: rgba(233,236,255,.86); font-weight:900;">Muito bem! &lt;3 📝🥳</span>
-          </div>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <script>
-    // Relógio + data
-    const elT = document.getElementById('clockTime');
-    const elD = document.getElementById('clockDate');
-
-    function tick(){
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2,'0');
-      const mm = String(now.getMinutes()).padStart(2,'0');
-      elT.textContent = `${hh}:${mm}`;
-
-      const dd = String(now.getDate()).padStart(2,'0');
-      const mo = String(now.getMonth()+1).padStart(2,'0');
-      const yy = now.getFullYear();
-      const wd = now.toLocaleDateString('pt-BR', { weekday:'long' });
-      elD.textContent = `${wd} • ${dd}/${mo}/${yy}`;
+    .cardGit{
+        text-decoration: none;
     }
-    tick();
-    setInterval(tick, 10000);
 
-    // Tela cheia
-    const fsBtn = document.getElementById('fsBtn');
-    fsBtn.addEventListener('click', async () => {
-      try{
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-          fsBtn.textContent = '⛶ Sair tela cheia';
-        } else {
-          await document.exitFullscreen();
-          fsBtn.textContent = '⛶ Tela cheia';
-        }
-      }catch(e){}
-    });
-
-    // Tecla "f" alterna tela cheia
-    window.addEventListener('keydown', (ev) => {
-      if(ev.key.toLowerCase() === 'f'){
-        ev.preventDefault();
-        fsBtn.click();
-      }
-    });
-  </script>
-</body>
-</html>
+    .textGit{
+        margin: 0;
+        padding: 14px 8px;
+    }
