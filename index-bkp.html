@@ -230,99 +230,78 @@
     }
 
     /* ==========================
-       LINKS (AVA / GITHUB) - SUPER COMPACTOS (LINHA ÚNICA)
+       LINKS (AVA / GITHUB) - MAIS COMPACTOS
        ========================== */
     .grid2{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 6px;
+      gap: 12px;              /* menor */
+      margin-top: 6px;        /* menor */
     }
     @media (max-width: 860px){
       .grid2{ grid-template-columns: 1fr; }
       .clock{ text-align:left; }
     }
 
-    /* card bem baixo, estilo “barra” */
     .linkCard{
-      padding: 8px 10px;
-      border-radius: 16px;
+      padding: 12px 14px;     /* menor que o card padrão */
+      border-radius: 18px;
       display:flex;
-      align-items:center;
+      align-items:center;     /* mais “linha” */
       justify-content:space-between;
       gap: 10px;
-      min-height: 46px;
-      box-shadow: var(--softshadow);
-      transition: transform .20s ease, border-color .20s ease, background .20s ease;
+      min-height: 64px;       /* impede crescer demais */
+      transition: transform .25s ease, border-color .25s ease, background .25s ease;
     }
     .linkCard:hover{
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,.22);
-      background: rgba(255,255,255,.07);
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(255,255,255,.075);
     }
-
-    .linkMeta{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      min-width: 0;
-    }
-    .linkMeta .title{
-      font-weight: 950;
-      font-size: 13.5px;
-      margin:0;
+    .linkCard .title{
+      font-weight: 900;
+      font-size: 14px;        /* fixo e compacto */
+      margin:0 0 4px;
       letter-spacing:-.01em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 18ch;
+      line-height: 1.1;
     }
-
     .badge{
-      font-size: 11px;
+      font-size: 11px;        /* menor */
       color: rgba(255,255,255,.86);
-      padding: 3px 8px;
+      padding: 5px 8px;       /* menor */
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.18);
       white-space:nowrap;
       display:inline-block;
-      flex: 0 0 auto;
     }
-
     .linkCard a{
       color: var(--text);
       text-decoration:none;
       display:inline-flex;
       align-items:center;
       gap: 8px;
-      font-weight: 900;
-      opacity:.96;
-      padding: 6px 10px;
+      font-weight: 800;
+      opacity:.95;
+      padding: 7px 10px;      /* menor */
       border-radius: 12px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      background: rgba(0,0,0,.18);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
       flex: 0 0 auto;
-      font-size: 12.8px;
-      line-height: 1;
+      height: fit-content;
+      font-size: 13px;
     }
     .linkCard a:hover{
       transform: translateY(-1px);
       border-color: rgba(255,255,255,.26);
-      background: rgba(0,0,0,.26);
+      background: rgba(0,0,0,.24);
     }
 
-    /* deixa ainda mais “clean” no mobile */
-    @media (max-width: 520px){
-      .linkMeta .title{ max-width: 24ch; }
-      .badge{ display:none; }
-      .linkCard a{ padding: 6px 9px; }
-    }
+    .ava{ border-left: 6px solid color-mix(in srgb, var(--ava) 70%, transparent); }
+    .git{ border-left: 6px solid color-mix(in srgb, var(--git) 70%, transparent); }
 
-    .ava{ border-left: 5px solid color-mix(in srgb, var(--ava) 70%, transparent); }
-    .git{ border-left: 5px solid color-mix(in srgb, var(--git) 70%, transparent); }
-/* ==========================
+    /* ==========================
        AGENDA - MAIS DESTAQUE (SUTIL + ACESSÍVEL)
        ========================== */
     .agenda{
@@ -358,31 +337,27 @@
       padding-left: 0;                 /* remove deslocamento */
       list-style-position: inside;     /* bullets ficam “dentro” */
       display:inline-block;            /* permite centralizar sem ficar largo */
-      text-align:lef.agenda{
+      text-align:left;                 /* lista legível, alinhada */
+      gap: 10px;
+      font-size: clamp(16px, 1.8vw, 20px); /* maior um pouco */
+      line-height: 1.5;
+    }
+    .agenda li{
+      padding: 6px 0;
+    }
+
+    /* Glow / pulse bem suave (evita estímulo excessivo) */
+    .agenda{
       box-shadow:
         0 0 0 1px rgba(255,255,255,.06) inset,
         0 18px 50px rgba(0,0,0,.55),
-        0 0 28px rgba(255,110,150,.13); /* glow suave, mas visível */
-      animation: agendaPulse 4.0s ease-in-out infinite;
-      will-change: box-shadow, transform;
+        0 0 22px rgba(255,110,150,.10); /* glow leve */
+      animation: agendaPulse 5.2s ease-in-out infinite;
     }
     @keyframes agendaPulse{
       0%, 100%{
-        transform: translateZ(0) scale(1);
         box-shadow:
           0 0 0 1px rgba(255,255,255,.06) inset,
-          0 18px 50px rgba(0,0,0,.55),
-          0 0 28px rgba(255,110,150,.11);
-      }
-      50%{
-        transform: translateZ(0) scale(1.01);
-        box-shadow:
-          0 0 0 1px rgba(255,255,255,.09) inset,
-          0 18px 50px rgba(0,0,0,.55),
-          0 0 44px rgba(255,110,150,.19);
-      }
-    }
-
           0 18px 50px rgba(0,0,0,.55),
           0 0 22px rgba(255,110,150,.08);
       }
@@ -476,19 +451,23 @@
     <!-- LINKS (AVA / GITHUB) -->
     <section class="grid2">
       <article class="card linkCard ava">
-        <div class="linkMeta">
-          <p class="title">AVA</p>
+        <div>
+          <p class="title">Já logou no AVA?</p>
           <div class="badge">ava.sesisenai.org.br</div>
         </div>
-        <a href="http://ava.sesisenai.org.br/" target="_blank" rel="noopener">Abrir ↗</a>
+        <a href="http://ava.sesisenai.org.br/" target="_blank" rel="noopener">
+          Abrir ↗
+        </a>
       </article>
 
       <article class="card linkCard git">
-        <div class="linkMeta">
-          <p class="title">GitHub</p>
+        <div>
+          <p class="title">Já logou no github.com?</p>
           <div class="badge">github.com</div>
         </div>
-        <a href="https://github.com/" target="_blank" rel="noopener">Abrir ↗</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">
+          Abrir ↗
+        </a>
       </article>
     </section>
 
