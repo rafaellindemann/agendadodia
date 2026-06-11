@@ -19,7 +19,7 @@
       --softshadow: 0 10px 30px rgba(0,0,0,.38);
 
       --r: 22px;
-      --pad: clamp(16px, 2vw, 26px);
+      --pad: clamp(16px, 1vw, 26px);
       /* --gap: clamp(14px, 2vw, 22px); */
       --gap: clamp(8px, 1vw, 22px);
       --max: 1180px;
@@ -291,6 +291,9 @@
       white-space:nowrap;
       display:inline-block;
       flex: 0 0 auto;
+      overflow-wrap: break-word;
+      white-space: normal;
+      max-width: 100%;
     }
 
 
@@ -381,6 +384,7 @@
         0 0 28px rgba(255,110,150,.13); /* glow suave, mas visível */
       animation: agendaPulse 4.0s ease-in-out infinite;
       will-change: box-shadow, transform;
+      max-width: 100%;
     }
   }
 
